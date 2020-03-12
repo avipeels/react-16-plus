@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Person from './Person/Person';
+import Validation from './Validation/Validation';
+import Char from './Char/Char';
 
 class App extends Component {
 
@@ -11,17 +13,10 @@ class App extends Component {
       { id: 'def234', name: 'Bhanu', age: 25 },
       { id: 'ghi345', name: 'Manoj', age: 26 },
     ],
-    displayPersons: false
+    displayPersons: false,
+    userInput: '',
   }
-  // switchNameHandler = (newName) => {
-  //   this.setState({
-  //     persons: [
-  //       { name: newName, age: 29 },
-  //       { name: 'Chandra Bhanu', age: 25 },
-  //       { name: 'Manoj Peelukhana', age: 26 },
-  //     ]
-  //   })
-  // }
+
   changeNameHandler = (event, id) => {
     const { persons } = this.state;
     //get the person
@@ -51,6 +46,21 @@ class App extends Component {
     this.setState({ persons: newPersons })
   }
 
+  changeTextInputHandler = (event) => {
+    const userInput = event.target.value;
+    this.setState({ userInput: userInput });
+  }
+
+  deleteCharHandler = (index) => {
+    
+    const textArray = this.state.userInput.split('');
+    textArray.splice(index, 1);
+    const updatedText = textArray.join('');
+    this.setState({
+      userInput: updatedText
+    });
+  }
+
   render() {
     const style = {
       backgroundColor: 'white',
@@ -59,7 +69,7 @@ class App extends Component {
       padding: '8px',
       cursor: 'pointer'
     }
-    const { displayPersons, persons } = this.state;
+    const { displayPersons, persons, userInput } = this.state;
     let personsList = null;
     if (displayPersons) {
       personsList = (
@@ -73,18 +83,19 @@ class App extends Component {
               changed={(event) => this.changeNameHandler(event, person.id)}
             />
           })}
-          {/* <Person name={this.state.persons[0].name} age={this.state.persons[0].age} />
-          <Person
-            click={this.switchNameHandler.bind(this, 'Avinash P')}
-            name={this.state.persons[1].name}
-            age={this.state.persons[1].age}
-            changed={this.changeNameHandler}>My hobbies: Gaming
-            </Person>
-          <Person name={this.state.persons[2].name} age={this.state.persons[2].age} /> */}
         </div>
       )
     }
+
+    const charList = userInput.split('').map((ch, index) => {
+      return <Char
+        character={ch}
+        key={index}
+        clicked={() => this.deleteCharHandler(index)}
+      />
+    })
     return (
+
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
@@ -97,6 +108,17 @@ class App extends Component {
           onClick={this.toggleNameDisplayHandler}>Toggle Persons
         </button>
         {personsList}
+
+        {/* { Assignment} */}
+
+        <input
+          className="text"
+          type="text"
+          onChange={(event) => this.changeTextInputHandler(event)}
+        />
+        {(userInput.length > 0) && <p>{userInput}</p>}
+        {(userInput.length > 0) && <Validation textLength={userInput.length} />}
+        {charList}
       </div>
     );
   }
